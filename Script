@@ -1,0 +1,111 @@
+#Link Course
+#https://www.udemy.com/course/complete-python-bootcamp
+
+import random
+suits = ("Hearts","Diamonds","Spades","Clubs")
+ranks = ("two","three","four","five","six","seven","eight","nine","ten","jack","queen","king","ace")
+values = {"two":2,"three":3,"four":4,"five":5,"six":6,"seven":7,"eight":8,"nine":9,"ten":10,"jack":11,"queen":12,"king":13,"ace":14}
+
+#Class for card
+class Card:
+    def __init__(self,suit,rank):
+        self.suit = suit
+        self.rank = rank
+        self.value = values[rank.lower()]
+
+    def __str__(self):
+        return self.rank +" of "+self.suit
+
+#Class fopr Deck
+class Deck:
+    def __init__(self):
+        self.cards = []
+
+        for suit in suits:
+            for rank in ranks:
+                new_card = Card(suit,rank)
+                self.cards.append(new_card)
+
+    def shuffle(self):
+        random.shuffle(self.cards)
+
+    def take_one(self):
+        return self.cards.pop()
+
+#Class for Player
+class Player:
+    def __init__(self,Name):
+        self.Name = Name
+        self.cards = []
+
+    def remove_card(self):
+        return self.cards.pop(0)
+
+    def add_card(self, new_cards):
+        #Multiple Card
+        if type(new_cards) == type([]):
+            self.cards.extend(new_cards)
+        #Single Card    
+        else:
+            self.cards.append(new_cards)
+
+    def __str__(self):
+        return f"Player {self.Name} has {len(self.cards)} cards."
+
+
+#Logic Game
+#Input Player Name
+Player1 = Player(input("Input Player 1 Name = "))
+Player2 = Player(input("Input Player 2 Name = "))
+#PReparing Cards
+cards_new = Deck()
+cards_new.shuffle()
+
+for i in range(26):
+    Player1.add_card(cards_new.take_one())
+    Player2.add_card(cards_new.take_one())
+
+Game_Stats = True
+Round_Num = 0
+
+while Game_Stats:
+    Round_Num += 1
+    print(f"This is Round {Round_Num}")
+    if len(Player1.cards) == 0:
+        print("Player 1 Lose, Player 2 Win")
+        Game_Stats = False
+        break
+    elif len(Player2.cards) == 0:
+        print("Player 2 Lose, And Player 1 Win")
+        Game_Stats = False
+        break
+
+    Player1_card = []
+    Player1_card.append(Player1.remove_card())
+    Player2_card = []
+    Player2_card.append(Player2.remove_card())
+
+    war = True
+    while war:
+        if Player1_card[-1].value> Player2_card[-1].value:
+            Player1.add_card(Player1_card)
+            Player1.add_card(Player2_card)
+            war = False
+        elif Player1_card[-1].value < Player2_card[-1].value:
+            Player2.add_card(Player2_card)
+            Player2.add_card(Player2_card)
+            war = False
+        else:
+            print("THIS IS A WAR!!")
+            if len(Player1_card) < 3:
+                print("Player 1 Card < 3, Player 2 WIN!!")
+                Game_Stats = False
+                break
+            elif len(Player2_card) < 3:
+                print("Player 2 Card < 3, Player 1 WIN!!")
+                Game_Stats = False
+                break
+            else :
+                for x in range(3):
+                    Player1_card.append(Player1.remove_card())
+                    Player2_card.append(Player2.remove_card())
